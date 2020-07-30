@@ -198,8 +198,9 @@ class HomeController extends Controller
 
 
     public function managebranch(Request $request){
+
         $branch=Branches::where('id',$request->branch)->first();
-        $products=Products::get();
+        $products=Products::where('branch_id',$branch->bid)->get();
         return view('productview', compact('branch','products'));
     }
 
