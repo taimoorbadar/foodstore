@@ -230,7 +230,7 @@ class HomeController extends Controller
 
     public function pdfview(){
        $data=Session::get('Data');
-        $pdf = PDF::loadView('pdf',$data);  
+        $pdf = \PDF::loadView('pdf',['data'=>$data]);  
         return $pdf->download('test-report.pdf');
     }
 
