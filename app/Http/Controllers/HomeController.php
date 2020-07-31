@@ -125,6 +125,11 @@ class HomeController extends Controller
 
 
     public function readfile(Request $request){
+        $branche=Branches::where('bid',$request->branchid)->first();
+        $branch=$branche->bname. ' - ' .$branche->bid;
+        $deduction='15';
+        if($branche->btype=='restaurant')
+            $deduction='20';
           $request->validate([
             'file' => 'required'
         ]);
@@ -139,20 +144,72 @@ class HomeController extends Controller
                 continue;
             }
             else{
+                $eachpros=explode( ',', $value[19]);
+                foreach($eachpros as $eachpr){
+                    $eachpro=ltrim($eachpr);
+                    $seperating =substr($eachpro, 0, 2);
+                    $quantity = str_replace(' ', '', $seperating);
+                    $productname=substr($eachpro, 2, 50);
+                    $productrecord=Products::where('name',$productname)->first();
+                    if(isset($productrecord))
+                    $productprice=$productrecord->price;
+                    else
+                    $productprice='0';
+
+                    $totalprice=$productprice * $quantity;
+
                 $record= array(
                   "bname" => $value[0],
                   "bid" => $value[3],
-                  "pname" => $value[19],
-                  "price" => $value[17]
+                  "pname" => $productname,
+                  "uprice" => $productprice,
+                  "quantity" => $quantity,
+                  "tprice" => $totalprice,
                 );
+
+                }
             }
             if(isset($record['bid']) && $record['bid']==$request->branchid){
                 $data[]=$record;
             }
-        }
-        Session::put('Data', $data);
 
-        $html = view('recentadded', compact('data'))->render();
+        }
+        $getunique=unique_array($data);
+        foreach ($getunique as $uniquepro) {
+            $doarray=explode(',',$uniquepro['quantity']);
+            $tquantity=array_sum($doarray);
+            $tprice=$tquantity * $uniquepro['uprice'];
+            $finaldata=array(
+                "branch" => $branche->bid,
+                "product" => $uniquepro['pname'],
+                "quantity" => $tquantity,
+                "uprice" => $uniquepro['uprice'],
+                "tprice" => $tprice,
+            );
+            $finally[]=$finaldata;
+        }
+        
+        $revarrys=revenue_array($finally);
+        foreach ($revarrys as $revarray){
+
+            $rarray=explode(',',$revarray['tprice']);
+            $totalrevenue=array_sum($rarray);
+            $dedvalue=$totalrevenue*$deduction/100;
+            $totalprofit= $totalrevenue - $dedvalue;
+
+            $revstream=array(
+                "revenue" => $totalrevenue,
+                "deduction" => $deduction,
+                "profit" => $totalprofit,
+            );
+        }
+
+
+        Session::put('Data', $data);
+        Session::put('Finally', $finally);
+        Session::put('Revenue', $revstream);
+
+        $html = view('recentadded', compact('data','branch','deduction','finally','revstream'))->render();
         return view('home',compact('html'));
 
     }
@@ -170,6 +227,7 @@ class HomeController extends Controller
             $create=Branches::create([
             'bid' => $request['bid'],
             'bname' => $request['bname'],
+            'btype' => $request['branch_type'],
             'baddress' => $request['baddress'],
         ]);
             if(isset($create))
@@ -183,9 +241,9 @@ class HomeController extends Controller
     public function updatebranch(Request $request){
         $checkid=Branches::where('bid',$request->branch)->where('id','!=',$request->tabid)->get();
         if($request->branch==$request->bid){
-            $update=Branches::where('bid',$request->branch)->update(['bname' => $request->bname,'baddress' => $request->baddress]);
+            $update=Branches::where('bid',$request->branch)->update(['bname' => $request->bname,'btype' => $request->branch_type,'baddress' => $request->baddress]);
             if(isset($update))
-                return redirect('branches')->with('success','New Branch created successfully.');
+                return redirect('branches')->with('success','Branch updated successfully.');
             else
                 return redirect('branches')->with('warning','Something went wrong.');
         }
@@ -193,9 +251,9 @@ class HomeController extends Controller
             return redirect('branches')->with('warning','Branch ID already exist.');
         }
         else{
-            $update=Branches::where('bid',$request->branch)->update(['bid' => $request->bid,'bname' => $request->bname,'baddress' => $request->baddress]);
+            $update=Branches::where('bid',$request->branch)->update(['bid' => $request->bid,'bname' => $request->bname,'btype' => $request->branch_type,'baddress' => $request->baddress]);
             if(isset($update))
-                return redirect('branches')->with('success','New Branch created successfully.');
+                return redirect('branches')->with('success','Branch updated successfully.');
             else
                 return redirect('branches')->with('warning','Something went wrong.');
         }
@@ -233,8 +291,13 @@ class HomeController extends Controller
         $mytime = Carbon\Carbon::now();
         $today= $mytime->toDateString();
        $data=Session::get('Data');
+       $finally=Session::get('Finally');
+        $revstream=Session::get('Revenue');
        $filename='report-'.$today.'.pdf';
-        $pdf = \PDF::loadView('pdf',['data'=>$data]);  
+       $loading['data']=$data;
+       $loading['finally']=$finally;
+       $loading['revstream']=$revstream;
+        $pdf = \PDF::loadView('pdf',['loading'=>$loading]);  
         return $pdf->download($filename);
     }
 

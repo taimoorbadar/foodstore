@@ -41,7 +41,6 @@ Route::post('/newproduct', 'HomeController@newproduct')->name('newproduct');
 Route::post('/delproduct', 'HomeController@delproduct')->name('delproduct');
 
 Route::get('/pdfview','HomeController@pdfview');
-// Route::get('pdfview',array('as'=>'pdfview','uses'=>'HomeController@pdfview'));
 
 
 

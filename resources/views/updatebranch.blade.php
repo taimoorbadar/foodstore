@@ -20,6 +20,14 @@
                 <input type="text" class="form-control" id="UpdateBname" required="" name="bname" placeholder="Branch Name" />
               </div>
               <div class="form-group">
+                <label>Change Branch Type</label><br>
+                <select style="width: 400px;height: 40px" name="branch_type">
+                  <option id="BranchType" value="">Select</option>
+                  <option value="restaurant">Restaurant</option>
+                  <option value="mart">Mart</option>
+                </select>
+              </div>
+              <div class="form-group">
                 <label>Change Branch Address</label>
                 <input type="text" class="form-control" id="BranchAddress" name="baddress" placeholder="Branch Address" />
               </div>
@@ -53,6 +61,7 @@
       $('#EditBranch').find('#UpdateBranch').val(result.branch.bid)
       $('#EditBranch').find('#BRANCKID').val(result.branch.bid)
       $('#EditBranch').find('#BRANCdID').val(result.branch.id)
+      $('#EditBranch').find('#BranchType').val(result.branch.btype)
       $('#EditBranch').find('#UpdateBname').val(result.branch.bname)
       $('#EditBranch').find('#BranchAddress').val(result.branch.baddress)
     }});
