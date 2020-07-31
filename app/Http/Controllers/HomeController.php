@@ -8,6 +8,8 @@ use App\User;
 use App\Branches;
 use App\Products;
 use Auth;
+use PDF;
+use Session;
 
 class HomeController extends Controller
 {
@@ -147,6 +149,8 @@ class HomeController extends Controller
                 $data[]=$record;
             }
         }
+        Session::put('Data', $data);
+
         $html = view('recentadded', compact('data'))->render();
         return view('home',compact('html'));
 
@@ -222,6 +226,12 @@ class HomeController extends Controller
        return redirect('branches')->with('success','Product Deleted Successfully');
         else
             return redirect('users')->with('warning','Sorry, Something went wrong.');
+    }
+
+    public function pdfview(){
+       $data=Session::get('Data');
+        $pdf = PDF::loadView('pdf',$data);  
+        return $pdf->download('test-report.pdf');
     }
 
 }

@@ -1,8 +1,10 @@
-<div class="row">
-  <a id="download_button" href="{{url('pdfview')}}" style="position: absolute;right: 0;margin-top: 82px;color: #550080;font-size: 20px;"> Download as PDF</a>
-</div>
+<style type="text/css">
+  td{
+    text-align: center;
+  }
+</style>
 <div class="row" id="contnet">
-                    <h3 style="width: 100%;text-align: center;margin-top: 80px">Recently Added Data</h3>
+                    <h2 style="width: 100%;text-align: center;margin-top: 80px">Data Record</h2>
                             <table class="table is-indent" data-plugin="animateList" data-animate="fade" data-child="tr"
                     data-selectable="selectable">
                     <thead>
@@ -30,35 +32,3 @@
                     </tbody>
                   </table>
                 </div>
-
-
-                <div id="elementH"></div>
-
-
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
-<script type="text/javascript">
-
-  var doc = new jsPDF();
-var specialElementHandlers = {
-    '#editor': function (element, renderer) {
-        return true;
-    }
-};
-
-function Click_Download() {
-  var elementHTML = $('#contnet').html();
-var specialElementHandlers = {
-    '#elementH': function (element, renderer) {
-        return true;
-    }
-};
-doc.fromHTML(elementHTML, 15, 15, {
-    'width': 170,
-    'elementHandlers': specialElementHandlers
-});
-
-// Save the PDF
-doc.save('sample-document.pdf');
-
-}
-</script>

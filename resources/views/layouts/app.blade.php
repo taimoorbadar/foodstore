@@ -2,13 +2,22 @@
 <html class="no-js css-menubar" lang="en">
   <head>
     
+<style type="text/css">
+  .navbar-header{
+    background: #960d0b !important;
+  }
+  th, td{
+    text-align: center !important;
+  }
+</style>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta name="description" content="bootstrap admin template">
     <meta name="author" content="">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>Welcome To FoodStore</title>
+    <title>Welcome To Polland Hopia</title>
     
     <link rel="apple-touch-icon" href="{{asset('assets/images/apple-touch-icon.png')}}">
     <link rel="shortcut icon" href="{{asset('assets/images/favicon.ico')}}">
@@ -75,9 +84,9 @@
           data-toggle="collapse">
           <i class="icon wb-more-horizontal" aria-hidden="true"></i>
         </button>
-        <div class="navbar-brand navbar-brand-center site-gridmenu-toggle" data-toggle="gridmenu">
+        <div class="navbar-brand navbar-brand-center site-gridmenu-toggle" >
           <img class="navbar-brand-logo" src="{{asset('assets/images/logo.png')}}" title="Remark">
-          <span class="navbar-brand-text hidden-xs-down"> FoodStore</span>
+          <span class="navbar-brand-text hidden-xs-down"> Polland Hopia</span>
         </div>
         <button type="button" class="navbar-toggler collapsed" data-target="#site-navbar-search"
           data-toggle="collapse">

@@ -46,6 +46,13 @@
     <script>
       Breakpoints();
     </script>
+
+<style type="text/css">
+    body{
+        background: #960d0b !important
+    }
+</style>
+
   </head>
 <body class="animsition page-login-v3 layout-full">
             @yield('content')

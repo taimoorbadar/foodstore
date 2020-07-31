@@ -12,7 +12,7 @@ $branchess=Branches::get();
             <div class="card">
 
                 <div class="row">
-                    <h3 style="width: 100%;text-align: center;">Select to choose or Drag a CSV file</h3>
+                    <h3 style="width: 100%;text-align: center;">Select or Drag Order Report CSV file</h3>
                     <div style="width: 100%;margin: 0 35%;">
                     <form action="{{url('readfile')}}" enctype="multipart/form-data" method="POST" class="dropzone" style="border:2px dashed blue;padding: 0">
                       @csrf
@@ -24,7 +24,7 @@ $branchess=Branches::get();
                       <select name="branchid" style="width: 100px;height: 35px;">
                         @if(isset($branchess) && $branchess->count()>0)
                         @foreach($branchess as $branche)
-                        <option value="{{$branche->bid}}">{{$branche->bid}}</option>
+                        <option value="{{$branche->bid}}">{{$branche->bname}} - {{$branche->bid}}</option>
                         @endforeach
                         @endif
                       </select>
@@ -47,22 +47,4 @@ $branchess=Branches::get();
     </div>
 </div>
 
-<script type="text/javascript">
-  $.getScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/0.9.0rc1/jspdf.min.js');
-  var doc = new jsPDF();
-var specialElementHandlers = {
-    '#editor': function (element, renderer) {
-        return true;
-    }
-};
-
-function Click_Download() {
-  alert('hello');
-    doc.fromHTML($('#Content_Download').html(), 15, 15, {
-        'width': 170,
-            'elementHandlers': specialElementHandlers
-    });
-    doc.save('sample-file.pdf');
-}
-</script>
 @endsection

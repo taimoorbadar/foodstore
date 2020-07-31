@@ -40,8 +40,7 @@
                             <label for="select_all"></label>
                           </span>
                         </th>
-                        <th scope="col">Branch ID</th>
-                        <th scope="col">Branch Name</th>
+                        <th scope="col">Branch</th>
                         <th scope="col">Address</th>
                         <th scope="col">action</th>
                       </tr>
@@ -59,15 +58,14 @@
                           </span>
                         </td>
                         <td>
-                          {{$branch->bid}}
+                          {{$branch->bid}} - {{$branch->bname}}
                         </td>
-                        <td >{{$branch->bname}}</td>
                         <td>{{$branch->baddress}}</td>
                         <td style="display: flex;"><a style="margin-top: 5px" href="#" onclick="editbranch({{$branch->id}})"><input type="hidden" name="campid" value="{{$branch->id}}"> Edit</a>
                           <form method="post" action="{{ url('branchdetail') }}">
                             @csrf
                             <input type="hidden" name="branch" value="{{$branch->id}}" class="userid">
-                             <button style="margin-left: 10px; background: green;border:none" class="btn btn-primary" type="submit">Details</button>
+                             <button style="margin-left: 10px; background: green;border:none" class="btn btn-primary" type="submit">Products</button>
                           </form>
                           </td>
                         <td class="suf-cell"></td>
