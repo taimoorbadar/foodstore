@@ -10,6 +10,7 @@ use App\Products;
 use Auth;
 use PDF;
 use Session;
+use Carbon;
 
 class HomeController extends Controller
 {
@@ -229,9 +230,12 @@ class HomeController extends Controller
     }
 
     public function pdfview(){
+        $mytime = Carbon\Carbon::now();
+        $today= $mytime->toDateString();
        $data=Session::get('Data');
+       $filename='report-'.$today.'.pdf';
         $pdf = \PDF::loadView('pdf',['data'=>$data]);  
-        return $pdf->download('test-report.pdf');
+        return $pdf->download($filename);
     }
 
 }
