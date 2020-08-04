@@ -125,6 +125,8 @@ class HomeController extends Controller
 
 
     public function readfile(Request $request){
+	    if($request->branchid=='Select Branch')
+	return redirect()->back() ->with('alert', 'You are not assigned any branch');
         $branche=Branches::where('bid',$request->branchid)->first();
         $branch=$branche->bname. ' - ' .$branche->bid;
         $deduction='15';

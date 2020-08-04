@@ -11,7 +11,12 @@ $branchess=Branches::get();
         <div class="col-md-8">
             <div class="card">
 
-                <div class="row">
+		<div class="row">
+	@if (\Session::has('alert'))
+                        <div class="alert alert-danger">
+                                <span>{!! \Session::get('alert') !!}</span>
+                        </div>
+                    @endif
                     <h3 style="width: 100%;text-align: center;">Select or Drag Order Report CSV file</h3>
                     <div style="width: 100%;margin: 0 35%;">
                     <form action="{{url('readfile')}}" enctype="multipart/form-data" method="POST" class="dropzone" style="border:2px dashed blue;padding: 0">
