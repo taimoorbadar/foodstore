@@ -64,7 +64,7 @@
             }
         </style>
     </head>
-    <body style="background-image: url(https://ak.picdn.net/shutterstock/videos/21977647/thumb/1.jpg);background-repeat: no-repeat;background-size: cover;">
+    <body style="background:#891c18;">
         <div class="flex-center position-ref full-height">
             @if (Route::has('login'))
                 <div class="top-right links">
@@ -82,7 +82,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Welcome to FoodStore
+                    <img src="{{asset('images/pollandhopia.png')}}" style="width: 60%;height: 60%">
                 </div>
 
                
