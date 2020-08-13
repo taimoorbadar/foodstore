@@ -17,7 +17,7 @@ class CreateProductsTable extends Migration
             $table->bigIncrements('id');
             $table->string('branch_id');
             $table->string('name');
-            $table->string('btype');
+            $table->string('catagory');
             $table->string('price');
             $table->timestamps();
         });
