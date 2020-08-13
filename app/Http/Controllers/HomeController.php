@@ -269,6 +269,14 @@ class HomeController extends Controller
         return view('productview', compact('branch','products'));
     }
 
+    public function getpros($branchid){
+
+        $branch=Branches::where('bid',$branchid)->first();
+        $products=Products::where('branch_id',$branch->bid)->get();
+        return view('productview', compact('branch','products'));
+    }
+
+
     public function newproduct(Request $request){
         $create=Products::create([
             'branch_id' => $request->bid,
@@ -276,7 +284,7 @@ class HomeController extends Controller
             'price' => $request->pprice
         ]);
         if(isset($create))
-            return redirect('branches')->with('success','New Product created successfully in '.$request->bid.'.');
+            return redirect('products/'.$request->bid)->with('success','New Product created successfully in '.$request->bid.'.');
         else
             return redirect('branches')->with('warning','Something went wrong.');
     }

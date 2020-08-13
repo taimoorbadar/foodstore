@@ -9,6 +9,9 @@
   th, td{
     text-align: center !important;
   }
+  .hamburger-arrow-left{
+    color: white;
+  }
 </style>
 
     <meta charset="utf-8">

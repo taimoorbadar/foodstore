@@ -31,6 +31,7 @@ Route::post('/delusr', 'HomeController@delusr')->name('delusr');
 Route::post('readfile', 'HomeController@readfile')->name('readfile');
 
 Route::post('branchdetail', 'HomeController@managebranch')->name('managebranch');
+Route::get('products/{id}', 'HomeController@getpros')->name('getpros');
 
 Route::post('/newbranch', 'HomeController@newbranch')->name('newbranch');
 Route::post('editbranch', 'HomeController@editbranch')->name('editbranch');
