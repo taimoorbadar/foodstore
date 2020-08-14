@@ -159,7 +159,7 @@ class HomeController extends Controller
 
 	    if($request->branchid=='Select Branch')
 	return redirect()->back() ->with('alert', 'You are not assigned any branch');
-
+	
         $time1=strtotime($request->date1);
         $time2=strtotime($request->date2);
 
@@ -182,7 +182,6 @@ class HomeController extends Controller
           
 
         if($request->file('file')){
-
 
             $request->validate([
             'file' => 'required'
@@ -216,7 +215,7 @@ class HomeController extends Controller
 
 
         }
-        elseif(isset($uploaded) && count($uploaded)>0){
+        elseif(isset($uploaded) && $uploaded->count()>0){
              
           $daten=file(public_path('/uploads/'.$uploaded['file_name']));
           $csv = array_map('str_getcsv', $daten);
@@ -225,7 +224,6 @@ class HomeController extends Controller
         else{
             return Redirect::back()->with('warning', 'No File Found');
         }
-
 
         foreach ($csv as $key => $value) {
             if($key=='0'){
