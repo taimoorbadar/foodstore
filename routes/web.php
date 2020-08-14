@@ -39,6 +39,8 @@ Route::post('/updatebranch', 'HomeController@updatebranch')->name('updatebranch'
 
 
 Route::post('/newproduct', 'HomeController@newproduct')->name('newproduct');
+Route::post('editproduct', 'HomeController@editproduct')->name('editproduct');
+Route::post('/updateproduct', 'HomeController@updateproduct')->name('updateproduct');
 Route::post('/delproduct', 'HomeController@delproduct')->name('delproduct');
 
 Route::get('/pdfview','HomeController@pdfview');

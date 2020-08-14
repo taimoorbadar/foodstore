@@ -17,6 +17,7 @@ class CreateBranchesTable extends Migration
             $table->bigIncrements('id');
             $table->string('bid');
             $table->string('bname');
+            $table->string('btype');
             $table->string('baddress');
             $table->timestamps();
         });

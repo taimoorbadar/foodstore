@@ -2,6 +2,10 @@
   <a id="download_button" href="{{url('pdfview')}}" style="position: absolute;right: 0;margin-top: 35px;color: #550080;font-size: 20px;"> Download as PDF</a>
 </div>
 <div class="row" id="contnet">
+  @if(isset($timee))
+  <p style="    margin: 50px 50px 0 50px;">From: <span>{{$timee['time1']}}</span></p>
+  <p style="    margin: 50px 50px 0 50px;">To: <span>{{$timee['time2']}}</span></p>
+  @endif
                     <h3 style="width: 100%;text-align: center;margin-top: 80px">Data from {{$branch}}</h3>
                             <table class="table is-indent" data-plugin="animateList" data-animate="fade" data-child="tr"
                     data-selectable="selectable">
@@ -40,6 +44,7 @@
                         
                         <th scope="col">Product</th>
                         <th scope="col">Quantity</th>
+                        <th scope="col">Discount</th>
                         <th scope="col">Revenue</th>
                       </tr>
                     </thead>
@@ -50,6 +55,7 @@
                         <td class="pre-cell"></td>
                         <td>{{$final['product']}}</td>
                         <td>{{$final['quantity']}}</td>
+                        <td>{{$final['discount']}}%</td>
                         <td>{{$final['tprice']}}</td>
                       </tr>
                       @endforeach

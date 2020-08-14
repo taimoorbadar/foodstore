@@ -33,9 +33,9 @@
                       <tr>
                         <th></th>
                         
-                        <th scope="col">ID</th>
                         <th scope="col">Branch ID</th>
                         <th scope="col">Product Name</th>
+                        <th scope="col">Catagory</th>
                         <th scope="col">Product Price</th>
                         <th scope="col">Action</th>
                       </tr>
@@ -46,13 +46,11 @@
                       <tr >
                         <td class="pre-cell"></td>
                         
-                        <td>
-                          {{$product->id}}
-                        </td>
                         <td >{{$product->branch_id}}</td>
                         <td>{{$product->name}}</td>
+                        <td>{{$product->catagory}}</td>
                         <td>{{$product->price}}</td>
-                        <td style="display: flex;">
+                        <td style="display: flex;"><a style="margin-top: 5px" href="#" onclick="editproduct({{$product->id}})"> Edit</a>
                           <form method="post" action="{{ url('delproduct') }}">
                             @csrf
                             <input type="hidden" name="product" value="{{$product->id}}" class="userid">
@@ -96,6 +94,13 @@
                 <input type="text" class="form-control" required="" name="pname" placeholder="Product Name" />
               </div>
               <div class="form-group">
+                <label>Product Catagory</label><br>
+                <select style="width: 400px;height: 40px" name="catagory">
+                  <option value="Hopia">Hopia</option>
+                  <option value="Chinese Deli">Chinese Deli</option>
+                </select>
+              </div>
+              <div class="form-group">
                 <label>Product Price</label>
                 <input type="text" class="form-control" name="pprice" placeholder="Product Price" />
               </div>
@@ -108,7 +113,7 @@
         </div>
       </div>
     </div>
-@include('updatebranch')
+@include('updateproduct')
 
 <script type="text/javascript">
 

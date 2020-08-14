@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use App\User;
 use App\Branches;
 use App\Products;
 use Auth;
 use PDF;
+use App\UploadFile;
 use Session;
 use Carbon;
 
@@ -31,7 +35,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+	   
+        $uploaded=UploadFile::where('user_id', Auth::id())->orderBy('id','desc')->first();
+        return view('home', compact('uploaded'));
     }
 
     public function users(){
@@ -51,6 +57,11 @@ class HomeController extends Controller
     public function editbranch(Request $request){
         $branch=Branches::where('id',$request->bid)->first();
         return response()->json(['branch'=>$branch]);
+    }
+
+    public function editproduct(Request $request){
+        $product=Products::where('id',$request->pid)->first();
+        return response()->json(['product'=>$product]);
     }
 
     public function updateuser(Request $request){
@@ -125,27 +136,69 @@ class HomeController extends Controller
 
 
     public function readfile(Request $request){
+
+
 	    if($request->branchid=='Select Branch')
 	return redirect()->back() ->with('alert', 'You are not assigned any branch');
+
+
+        $time1=strtotime($request->date1);
+        $time2=strtotime($request->date2);
+
+        $saledst=$request->sale;
+        $uploaded=UploadFile::where('user_id', Auth::id())->orderBy('id', 'desc')->first();
+
         $branche=Branches::where('bid',$request->branchid)->first();
         $branch=$branche->bname. ' - ' .$branche->bid;
         $deduction='15';
         if($branche->btype=='restaurant')
             $deduction='20';
-          $request->validate([
+          
+
+
+        if($request->file('file')){
+
+            $request->validate([
             'file' => 'required'
         ]);
         
+         $file = file($request->file->getRealPath());
 
-        $file = file($request->file->getRealPath());
-        $filee=$request->file('file');
-        $filename=Auth::id().'-'.time().'-'.str_replace(' ','-',$filee->getClientOriginalName());
+
         $csv = array_map('str_getcsv', $file);
+        
+
+        $filee            = $request->file('file');
+        $identifier      = Auth::id().'-'.time();
+        
+
+        $destinationPath = public_path() . '/uploads/' ;
+        $extension       = $filee->getClientOriginalExtension();
+        $filename        = $identifier . "." . $extension;
+
+
+        $upload_success = $filee->move($destinationPath, $filename);
+        $storefile=UploadFile::create(['user_id'=>Auth::id(),'file_name'=>$filename, 'poster' => $filee->getClientOriginalName()]);
+
+        }
+        elseif(isset($uploaded) && $uploaded->count()>0){
+          $daten=file(public_path('/uploads/'.$uploaded['file_name']));
+          $csv = array_map('str_getcsv', $daten);
+         
+        }
+        else{
+            return Redirect::back()->with('warning', 'No File Found');
+        }
+
+
         foreach ($csv as $key => $value) {
             if($key=='0'){
                 continue;
             }
             else{
+                $createon=$value[5];
+                $created=date('Y-m-d',strtotime($createon));
+                $newcreate=strtotime($created);
                 $eachpros=explode( ',', $value[19]);
                 foreach($eachpros as $eachpr){
                     $eachpro=ltrim($eachpr);
@@ -167,25 +220,49 @@ class HomeController extends Controller
                   "uprice" => $productprice,
                   "quantity" => $quantity,
                   "tprice" => $totalprice,
+                  'created' => $newcreate
                 );
-
+                
                 }
             }
             if(isset($record['bid']) && $record['bid']==$request->branchid){
-                $data[]=$record;
+                if(isset($time1) && isset($time2) && $time2 >= $time1){
+                if($record['created'] >= $time1 && $record['created'] <= $time2){
+                    if($time1!=false){
+                        $data[]=$record;
+                    }
+                
+                }
+                elseif($request->date1==null && $request->date2==null){
+                    $data[]=$record;
+                }
+                }
+                
             }
 
         }
+        if(isset($data) && count($data)>0){
         $getunique=unique_array($data);
         foreach ($getunique as $uniquepro) {
             $doarray=explode(',',$uniquepro['quantity']);
             $tquantity=array_sum($doarray);
-            $tprice=$tquantity * $uniquepro['uprice'];
+            if(isset($saledst) && $saledst>0){
+            $unitdp=$uniquepro['uprice']*$saledst/100;
+            $unitdprice=$uniquepro['uprice']-$unitdp;
+            }
+            else{
+                $unitdprice=$uniquepro['uprice'];
+                $saledst='0';
+            }
+
+            $tprice=$tquantity * $unitdprice;
+
             $finaldata=array(
                 "branch" => $branche->bid,
                 "product" => $uniquepro['pname'],
                 "quantity" => $tquantity,
-                "uprice" => $uniquepro['uprice'],
+                "uprice" => $unitdprice,
+                "discount" => $saledst,
                 "tprice" => $tprice,
             );
             $finally[]=$finaldata;
@@ -206,13 +283,39 @@ class HomeController extends Controller
             );
         }
 
+        if(isset($request->date1) && isset($request->date2)){
+            $timee['time1']=$request->date1;
+            $timee['time2'] = $request->date2;
+            Session::put('Time', $timee);
+	}
+	else{
+		$timee=false;
+	}
+
+	
 
         Session::put('Data', $data);
         Session::put('Finally', $finally);
         Session::put('Revenue', $revstream);
 
-        $html = view('recentadded', compact('data','branch','deduction','finally','revstream'))->render();
-        return view('home',compact('html'));
+        $html = view('recentadded', compact('data','branch','deduction','finally','revstream','timee'))->render();
+
+        if(isset($storefile))
+            $loaded=$storefile->poster;
+        else
+        $loaded=$uploaded->poster;
+
+        return view('home',compact('html','loaded'));
+    }
+    else{
+        if(isset($storefile))
+            $loaded=$storefile->poster;
+        else
+        $loaded=$uploaded->poster;
+        $nodata='No Data Found!';
+        return view('home', compact('nodata', 'loaded'));
+    }
+        
 
     }
 
@@ -262,6 +365,18 @@ class HomeController extends Controller
     }
 
 
+
+     public function updateproduct(Request $request){
+        
+        
+            $update=Products::where('id',$request->productid)->update(['name' => $request->pname,'catagory' => $request->pcatagory,'price' => $request->pprice]);
+            if(isset($update))
+                return redirect('products/'.$request->bid)->with('success','Product updated successfully.');
+            else
+                return redirect('products/'.$request->bid)->with('warning','Something went wrong.');
+    }
+
+
     public function managebranch(Request $request){
 
         $branch=Branches::where('id',$request->branch)->first();
@@ -281,6 +396,7 @@ class HomeController extends Controller
         $create=Products::create([
             'branch_id' => $request->bid,
             'name' => $request->pname,
+            'catagory' => $request->catagory,
             'price' => $request->pprice
         ]);
         if(isset($create))
@@ -303,10 +419,13 @@ class HomeController extends Controller
        $data=Session::get('Data');
        $finally=Session::get('Finally');
         $revstream=Session::get('Revenue');
+        $timee=Session::get('Time');
        $filename='report-'.$today.'.pdf';
        $loading['data']=$data;
        $loading['finally']=$finally;
        $loading['revstream']=$revstream;
+       $loading['timee'] = $timee;
+        Session::put('Time', '');
         $pdf = \PDF::loadView('pdf',['loading'=>$loading]);  
         return $pdf->download($filename);
     }
