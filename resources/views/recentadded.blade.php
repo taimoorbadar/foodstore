@@ -89,7 +89,7 @@
                           @endforeach
                           @endif
                      </td>
-                     <td>{{$group['discount']}}</td>
+                     <td>{{$group['discount']}}%</td>
                      <td>
                           @php
                             

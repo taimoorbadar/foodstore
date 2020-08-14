@@ -9,11 +9,13 @@ $data=$loading['data'];
 $finally=$loading['finally'];
 $revstream=$loading['revstream'];
 $timee=$loading['timee'];
+$catgroup=$loading['catgroup'];
 @endphp
 
 
 <div class="row" id="contnet">
-  @if(isset($timee))
+  @if(isset($timee) && $timee!=null)
+  @php dd($catgroup); @endphp
   <p style="    margin: 50px 50px 0 50px;">From: <span>{{$timee['time1']}}</span></p>
   <p style="    margin: 50px 50px 0 50px;">To: <span>{{$timee['time2']}}</span></p>
   @endif
@@ -47,7 +49,7 @@ $timee=$loading['timee'];
                 </div>
 
 
-                <div class="row" id="Summary">
+                <div class="row" id="CatSummary">
                     <h3 style="width: 100%;text-align: center;margin-top: 80px">Summary</h3>
                             <table class="table is-indent" data-plugin="animateList" data-animate="fade" data-child="tr"
                     data-selectable="selectable">
@@ -55,21 +57,69 @@ $timee=$loading['timee'];
                       <tr>
                         <th></th>
                         
-                        <th scope="col">Product</th>
+                        <th scope="col">Catagory</th>
+                        <th scope="col">Products</th>
                         <th scope="col">Quantity</th>
                         <th scope="col">Discount</th>
                         <th scope="col">Revenue</th>
+                        
                       </tr>
                     </thead>
                     <tbody>
-                      @if(isset($finally) && count($finally)>0)
-                      @foreach($finally as $final)
+                      @if(isset($catgroup) && count($catgroup)>0)
+                      @foreach($catgroup as $group)
                       <tr >
                         <td class="pre-cell"></td>
-                        <td>{{$final['product']}}</td>
-                        <td>{{$final['quantity']}}</td>
-                        <td>{{$final['discount']}}%</td>
-                        <td>{{$final['tprice']}}</td>
+                        <td>{{$group['catagory']}}</td>
+                        <td>
+                          @php
+                            
+                          $products=$group['products'];
+                          $eachpros=explode( ',', $group['products']);
+                            
+                          @endphp
+                        
+                        @if(isset($eachpros) && count($eachpros)>0)
+                          @foreach($eachpros as $pro)
+                          
+                          {{$pro}}
+                          <br>
+                          @endforeach
+                          @endif
+                     </td>
+                     <td>
+                          @php
+                            
+                          $products=$group['quantity'];
+                          $eachpros=explode( ',', $group['quantity']);
+                            
+                          @endphp
+                        
+                        @if(isset($eachpros) && count($eachpros)>0)
+                          @foreach($eachpros as $pro)
+                          
+                          {{$pro}}
+                          <br>
+                          @endforeach
+                          @endif
+                     </td>
+                     <td>{{$group['discount']}}%</td>
+                     <td>
+                          @php
+                            
+                          $products=$group['tprice'];
+                          $eachpros=explode( ',', $group['tprice']);
+                            
+                          @endphp
+                        
+                        @if(isset($eachpros) && count($eachpros)>0)
+                          @foreach($eachpros as $pro)
+                          
+                          {{$pro}}
+                          <br>
+                          @endforeach
+                          @endif
+                     </td>
                       </tr>
                       @endforeach
                       @endif

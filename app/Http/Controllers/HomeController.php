@@ -367,6 +367,7 @@ class HomeController extends Controller
         Session::put('Data', $data);
         Session::put('Finally', $finally);
         Session::put('Revenue', $revstream);
+        Session::put('Catgroup', $catgroup);
 
         $html = view('recentadded', compact('data','branch','deduction','finally','revstream','timee','catgroup'))->render();
 
@@ -490,11 +491,13 @@ class HomeController extends Controller
        $finally=Session::get('Finally');
         $revstream=Session::get('Revenue');
         $timee=Session::get('Time');
+        $catgroup=Session::get('Catgroup');
        $filename='report-'.$today.'.pdf';
        $loading['data']=$data;
        $loading['finally']=$finally;
        $loading['revstream']=$revstream;
        $loading['timee'] = $timee;
+       $loading['catgroup'] = $catgroup;
         Session::put('Time', '');
         $pdf = \PDF::loadView('pdf',['loading'=>$loading]);  
         return $pdf->download($filename);
