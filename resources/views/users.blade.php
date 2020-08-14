@@ -54,10 +54,10 @@ $branchess=Branches::get();
                         <th scope="col">Action</th>
                       </tr>
                     </thead>
-                    <tbody>
+		    <tbody>
                       @if(isset($users) && $users->count()>0)
                       @foreach($users as $user)
-                      @php
+		      @php
                       $usradmn= 'No';
                       if($user->is_admin=='1')
                       $usradmn='Yes';

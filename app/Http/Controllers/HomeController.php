@@ -35,9 +35,9 @@ class HomeController extends Controller
      */
     public function index()
     {
+	   
         $uploaded=UploadFile::where('user_id', Auth::id())->orderBy('id','desc')->first();
-        $loaded=$uploaded->poster;
-        return view('home', compact('loaded'));
+        return view('home', compact('uploaded'));
     }
 
     public function users(){
@@ -155,6 +155,11 @@ class HomeController extends Controller
 
     public function readfile(Request $request){
 
+
+
+	    if($request->branchid=='Select Branch')
+	return redirect()->back() ->with('alert', 'You are not assigned any branch');
+
         $time1=strtotime($request->date1);
         $time2=strtotime($request->date2);
 
@@ -198,7 +203,7 @@ class HomeController extends Controller
         
 
         $filee            = $request->file('file');
-        $identifier      = Auth::id().'-'.time("Ymd");
+        $identifier      = Auth::id().'-'.time();
         
 
         $destinationPath = public_path() . '/uploads/' ;
@@ -354,8 +359,12 @@ class HomeController extends Controller
             $timee['time1']=$request->date1;
             $timee['time2'] = $request->date2;
             Session::put('Time', $timee);
-        }
+	}
+	else{
+		$timee=false;
+	}
 
+	
 
         Session::put('Data', $data);
         Session::put('Finally', $finally);
@@ -368,7 +377,7 @@ class HomeController extends Controller
         else
         $loaded=$uploaded->poster;
 
-        return view('home',compact('html','nodata','loaded'));
+        return view('home',compact('html','loaded'));
     }
     else{
         if(isset($storefile))
