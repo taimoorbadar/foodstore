@@ -49,6 +49,24 @@ class HomeController extends Controller
             return redirect('home');
         }
     }
+ 
+    public function reports() {
+        return view('reports');
+    }
+
+    public function delreport(Request $request) {
+
+    $report=UploadFile::where('id', $request->report)->first();
+        if(isset($report)){
+            $delrep=UploadFile::where('id', $report->id)->delete();
+            $delfile=File::delete(public_path('/uploads/').$report->file_name);
+            return redirect('reports')->with('success','Your Report Deleted Successfully.');
+        }
+        else{
+             return redirect('reports')->with('warning','Something went wrong.');
+        }
+
+    }
 
     public function edituser(Request $request){
         $user=User::where('id',$request->userid)->first();
@@ -137,21 +155,29 @@ class HomeController extends Controller
 
     public function readfile(Request $request){
 
-
         $time1=strtotime($request->date1);
         $time2=strtotime($request->date2);
 
+        if(isset($request->branchid))
+        $branchid=$request->branchid;
+        else
+        $branchid=Auth::user()->branchid;
         $saledst=$request->sale;
+        if($request->reportid)
+        $uploaded=UploadFile::where('id',$request->reportid)->first();
+        else
         $uploaded=UploadFile::where('user_id', Auth::id())->orderBy('id', 'desc')->first();
-        $branche=Branches::where('bid',$request->branchid)->first();
+        
+
+        $branche=Branches::where('bid',$branchid)->first();
         $branch=$branche->bname. ' - ' .$branche->bid;
         $deduction='15';
         if($branche->btype=='restaurant')
             $deduction='20';
           
 
-
         if($request->file('file')){
+
 
             $request->validate([
             'file' => 'required'
@@ -159,6 +185,14 @@ class HomeController extends Controller
         
          $file = file($request->file->getRealPath());
 
+         $originalname=$request->file('file')->getClientOriginalName();
+
+         $alrul=UploadFile::where('poster',$originalname)->first();
+         if(isset($alrul) && $alrul->count()>0){
+            $delfile=File::delete(public_path('/uploads/').$alrul->file_name);
+            $delul=UploadFile::where('id',$alrul->id)->delete();
+            
+         }
 
         $csv = array_map('str_getcsv', $file);
         
@@ -175,8 +209,10 @@ class HomeController extends Controller
         $upload_success = $filee->move($destinationPath, $filename);
         $storefile=UploadFile::create(['user_id'=>Auth::id(),'file_name'=>$filename, 'poster' => $filee->getClientOriginalName()]);
 
+
         }
-        elseif(isset($uploaded) && $uploaded->count()>0){
+        elseif(isset($uploaded) && count($uploaded)>0){
+             
           $daten=file(public_path('/uploads/'.$uploaded['file_name']));
           $csv = array_map('str_getcsv', $daten);
          
@@ -205,8 +241,10 @@ class HomeController extends Controller
                     $productprice=$productrecord->price;
                     else
                     $productprice='0';
-
                     $totalprice=$productprice * $quantity;
+                    $procatagory='';
+                    if(isset($productrecord))
+                    $procatagory=$productrecord->catagory;
 
                 $record= array(
                   "bname" => $value[0],
@@ -215,6 +253,7 @@ class HomeController extends Controller
                   "uprice" => $productprice,
                   "quantity" => $quantity,
                   "tprice" => $totalprice,
+                  "catagory" => $procatagory,
                   'created' => $newcreate
                 );
                 
@@ -234,13 +273,20 @@ class HomeController extends Controller
                 }
                 
             }
+            elseif(isset($request->reportid)){
+                $data[]=$record;
+            }
 
         }
+
+
         if(isset($data) && count($data)>0){
+
         $getunique=unique_array($data);
         foreach ($getunique as $uniquepro) {
             $doarray=explode(',',$uniquepro['quantity']);
             $tquantity=array_sum($doarray);
+            $procatagory=$uniquepro['catagory'];
             if(isset($saledst) && $saledst>0){
             $unitdp=$uniquepro['uprice']*$saledst/100;
             $unitdprice=$uniquepro['uprice']-$unitdp;
@@ -250,6 +296,8 @@ class HomeController extends Controller
                 $saledst='0';
             }
 
+
+
             $tprice=$tquantity * $unitdprice;
 
             $finaldata=array(
@@ -258,11 +306,33 @@ class HomeController extends Controller
                 "quantity" => $tquantity,
                 "uprice" => $unitdprice,
                 "discount" => $saledst,
+                "catagory" => $procatagory,
                 "tprice" => $tprice,
             );
             $finally[]=$finaldata;
         }
-        
+            
+
+
+        $proall=Products::get()->toArray();
+         $catagorises=cat_array($finally);
+         foreach($catagorises as $catagory){
+            
+            $catarray=array(
+                "catagory" => $catagory['catagory'],
+                "products" => $catagory['product'],
+                "uprice" => $catagory['uprice'],
+                "quantity" => $catagory['quantity'],
+                "discount" => $catagory['discount'],
+                "tprice" => $catagory['tprice']
+            );
+
+            $catgroup[]=$catarray;
+         }
+
+
+         
+
         $revarrys=revenue_array($finally);
         foreach ($revarrys as $revarray){
 
@@ -278,6 +348,8 @@ class HomeController extends Controller
             );
         }
 
+
+
         if(isset($request->date1) && isset($request->date2)){
             $timee['time1']=$request->date1;
             $timee['time2'] = $request->date2;
@@ -289,7 +361,7 @@ class HomeController extends Controller
         Session::put('Finally', $finally);
         Session::put('Revenue', $revstream);
 
-        $html = view('recentadded', compact('data','branch','deduction','finally','revstream','timee'))->render();
+        $html = view('recentadded', compact('data','branch','deduction','finally','revstream','timee','catgroup'))->render();
 
         if(isset($storefile))
             $loaded=$storefile->poster;

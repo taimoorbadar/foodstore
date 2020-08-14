@@ -265,6 +265,15 @@
                     
               </li>
               @endif
+
+              <li class="site-menu-item has-sub">
+                <a href="{{url('reports')}}">
+                        <i class="site-menu-icon wb-file" aria-hidden="true"></i>
+                        <span class="site-menu-title">Reports</span>
+                    </a>
+                    
+              </li>
+
             </ul>
                </div>
         </div>

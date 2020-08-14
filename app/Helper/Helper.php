@@ -22,15 +22,44 @@ function unique_array($arr) {
             $result[$v["pname"]]["pname"] = $v["pname"];
             $result[$v["pname"]]["quantity"] = $v["quantity"];
             $result[$v["pname"]]["uprice"] = $v["uprice"];
+            $result[$v["pname"]]["catagory"] = $v["catagory"];
         } else {
             $result[$v["pname"]]["quantity"] .= "," . $v["quantity"];
             $result[$v["pname"]]["uprice"] = $v["uprice"];
+            $result[$v["pname"]]["catagory"] = $v["catagory"];
         }
     }
 
     $result = array_values($result);
     return $result;
 }
+
+
+function cat_array($arr) {
+    $result = [];
+    foreach($arr as $v) {
+        if(!isset($result[$v["catagory"]])) {
+            $result[$v["catagory"]]["catagory"] = $v["catagory"];
+            $result[$v["catagory"]]["product"] = $v["product"];
+            $result[$v["catagory"]]["uprice"] = $v["uprice"];
+            $result[$v["catagory"]]["quantity"] = $v["quantity"];
+            $result[$v["catagory"]]["discount"] = $v["discount"];
+            $result[$v["catagory"]]["tprice"] = $v["tprice"];
+        } else {
+            $result[$v["catagory"]]["product"] .= "," . $v["product"];
+            $result[$v["catagory"]]["uprice"] .= "," . $v["uprice"];
+            $result[$v["catagory"]]["quantity"] .= "," . $v["quantity"];
+            
+            $result[$v["catagory"]]["tprice"] .= "," . $v["tprice"];
+        }
+    }
+
+    $result = array_values($result);
+    return $result;
+}
+
+
+
 function revenue_array($arr) {
     $result = [];
     foreach($arr as $v) {
@@ -45,6 +74,8 @@ function revenue_array($arr) {
     $result = array_values($result);
     return $result;
 }
+
+
 
 
 function csvstring_to_array($string, $separatorChar = ',', $enclosureChar = '"', $newlineChar = "\n") {

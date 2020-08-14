@@ -21,6 +21,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('logout', 'Auth\LoginController@logout')->name('logout');
 Route::get('users', 'HomeController@users')->name('users');
 Route::get('branches', 'HomeController@branches')->name('branches');
+Route::get('reports', 'HomeController@reports')->name('reports');
 
 
 
@@ -45,6 +46,8 @@ Route::post('/delproduct', 'HomeController@delproduct')->name('delproduct');
 
 Route::get('/pdfview','HomeController@pdfview');
 
+
+Route::post('/delreport', 'HomeController@delreport')->name('delreport');
 
 
 
