@@ -20,15 +20,33 @@
                       </tr>
                     </thead>
                     <tbody>
+                      @if(isset($catgroup) && count($catgroup)>0)
+                      @foreach($catgroup as $final)
+                      @php
+
+                      $catname=$final['catagory'];
+                      $catstyle='';
+                      if($final['catagory']==''){
+                      
+                      $catname='No Catagory';
+                      $catstyle='color:red;';
+                      }
+                      @endphp
+                      
+                      <tr ><td style="{{$catstyle}}">{{$catname}}</td></tr>
                       @if(isset($data) && count($data)>0)
-                      @foreach($data as $dat)
-                      <tr >
+                      @foreach($data as $key => $dat)
+                      @if($dat['catagory']==$final['catagory'])
+                      <tr style="border-bottom:1px solid #e6e6e6;">
                         <td class="pre-cell"></td>
                         <td>{{$dat['pname']}}</td>
-                        <td>{{$dat['uprice']}}</td>
+                        <td>{{$dat['oprice']}}({{$dat['discount']}}% Off) = {{$dat['uprice']}}</td>
                         <td>{{$dat['quantity']}}</td>
                         <td>{{$dat['tprice']}}</td>
                       </tr>
+                      @endif
+                      @endforeach
+                      @endif
                       @endforeach
                       @endif
                     </tbody>
@@ -43,7 +61,6 @@
                       <tr>
                         <th></th>
                         
-                        <th scope="col">Catagory</th>
                         <th scope="col">Products</th>
                         <th scope="col">Quantity</th>
                         <th scope="col">Discount</th>
@@ -51,12 +68,23 @@
                         
                       </tr>
                     </thead>
+                    
                     <tbody>
                       @if(isset($catgroup) && count($catgroup)>0)
                       @foreach($catgroup as $group)
-                      <tr >
+                      @php
+                      $catname=$group['catagory'];
+                      $catstyle='';
+                      if($group['catagory']==''){
+                      
+                      $catname='No Catagory';
+                      $catstyle='color:red;';
+                      }
+                      @endphp
+                      <tr><td style="{{$catstyle}}">{{$catname}}</td></tr>
+                      <tr style="border-bottom: 1px solid #e8e7e7;">
                         <td class="pre-cell"></td>
-                        <td>{{$group['catagory']}}</td>
+                        
                         <td>
                           @php
                             

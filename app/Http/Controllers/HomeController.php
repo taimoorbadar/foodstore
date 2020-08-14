@@ -72,6 +72,17 @@ class HomeController extends Controller
         $user=User::where('id',$request->userid)->first();
         return response()->json(['user'=>$user]);
     }
+    public function editrepo(Request $request){
+        $repo=UploadFile::where('id',$request->report)->first();
+        return response()->json(['report'=>$repo]);
+    }
+    public function updaterepo(Request $request){
+        $update=UploadFile::where('id',$request->repoid)->update(['poster'=> $request->name]);
+        if(isset($update))
+        return redirect('reports')->with('success','Report is updated successfully.');
+        else
+            return redirect('reports')->with('warning','Something went wrong');
+    }
     public function editbranch(Request $request){
         $branch=Branches::where('id',$request->bid)->first();
         return response()->json(['branch'=>$branch]);
@@ -244,16 +255,29 @@ class HomeController extends Controller
                     $productprice=$productrecord->price;
                     else
                     $productprice='0';
-                    $totalprice=$productprice * $quantity;
+                    
                     $procatagory='';
                     if(isset($productrecord))
                     $procatagory=$productrecord->catagory;
+
+                if(isset($saledst) && $saledst>0){
+                $unitpr=$productprice*$saledst/100;
+                $unitpri=$productprice-$unitpr;
+                }
+                else{
+                    $unitpri=$productprice;
+                    $saledst='0';
+                }
+                $totalprice=$unitpri * $quantity;
 
                 $record= array(
                   "bname" => $value[0],
                   "bid" => $value[3],
                   "pname" => $productname,
-                  "uprice" => $productprice,
+                  "catagory" => $procatagory,
+                  "discount" => $saledst,
+                  "oprice" => $productprice,
+                  "uprice" => $unitpri,
                   "quantity" => $quantity,
                   "tprice" => $totalprice,
                   "catagory" => $procatagory,
@@ -290,16 +314,8 @@ class HomeController extends Controller
             $doarray=explode(',',$uniquepro['quantity']);
             $tquantity=array_sum($doarray);
             $procatagory=$uniquepro['catagory'];
-            if(isset($saledst) && $saledst>0){
-            $unitdp=$uniquepro['uprice']*$saledst/100;
-            $unitdprice=$uniquepro['uprice']-$unitdp;
-            }
-            else{
-                $unitdprice=$uniquepro['uprice'];
-                $saledst='0';
-            }
-
-
+            $unitdprice=$uniquepro['uprice'];
+                
 
             $tprice=$tquantity * $unitdprice;
 
