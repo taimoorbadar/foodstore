@@ -4,7 +4,7 @@
   }
 </style>
 
-@php
+	@php
 $data=$loading['data'];
 $finally=$loading['finally'];
 $revstream=$loading['revstream'];
@@ -15,7 +15,7 @@ $catgroup=$loading['catgroup'];
 
 <div class="row" id="contnet">
   @if(isset($timee) && $timee!=null)
-  @php dd($catgroup); @endphp
+
   <p style="    margin: 50px 50px 0 50px;">From: <span>{{$timee['time1']}}</span></p>
   <p style="    margin: 50px 50px 0 50px;">To: <span>{{$timee['time2']}}</span></p>
   @endif

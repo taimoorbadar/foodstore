@@ -498,7 +498,7 @@ class HomeController extends Controller
        $loading['revstream']=$revstream;
        $loading['timee'] = $timee;
        $loading['catgroup'] = $catgroup;
-        Session::put('Time', '');
+       Session::put('Time', '');
         $pdf = \PDF::loadView('pdf',['loading'=>$loading]);  
         return $pdf->download($filename);
     }
