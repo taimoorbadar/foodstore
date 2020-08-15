@@ -57,15 +57,17 @@ $reports=UploadFile::where('user_id',Auth::id())->orderBy('id','desc')->get();
                         <td >{{$report->poster}}</td>
                         <td >{{$report->created_at}}</td>
                         <td style="display: flex;">
+                          <a style="margin-top: 5px" href="#" onclick="editrepo({{$report->id}})"><input type="hidden" name="reportid" value="{{$report->id}}"> Edit</a>
                           <form method="post" action="{{ url('delreport') }}">
                             @csrf
                             <input type="hidden" name="report" value="{{$report->id}}" class="reportid">
                              <button style="margin-left: 10px; background: red;border:none" class="btn btn-primary" type="submit">Delete</button>
                           </form>
+
                           <form method="post" action="{{ url('readfile') }}">
                             @csrf
                             <input type="hidden" name="reportid" value="{{$report->id}}" class="reportid">
-                             <button style="margin-left: 10px; background: green;border:none" class="btn btn-primary" type="submit">Use This</button>
+                             <button style="margin-left: 10px; background: green;border:none" class="btn btn-primary" type="submit">View</button>
                           </form>
                           
                           </td>
@@ -83,6 +85,57 @@ $reports=UploadFile::where('user_id',Auth::id())->orderBy('id','desc')->get();
     </div>
 </div>
 
+
+ <div class="modal fade" id="ReportFrom" aria-hidden="true" aria-labelledby="ReportFrom"
+      role="dialog" tabindex="-1">
+      <div class="modal-dialog modal-simple">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" aria-hidden="true" data-dismiss="modal">×</button>
+            <h4 class="modal-title">Change Report Name</h4>
+          </div>
+          <form method="post" action="{{ url('updaterepo') }}">
+                @csrf
+          <div class="modal-body">
+              <div class="form-group">
+                <label>Change Report Name</label>
+                <input type="hidden" id="RepoID" name="repoid" >
+                <input type="text" id="RepoName" class="form-control" required="" name="name" placeholder="Name" />
+              </div>
+              
+              
+              
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-sm btn-white" data-dismiss="modal" href="javascript:void(0)">Cancel</a>
+            <button class="btn btn-primary" type="submit">Update</button>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+<script >
+  function editrepo(report) {
+     $.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+       jQuery.ajax({
+    url: "{{ url('editrepo') }}",
+    type: 'POST',
+    data: {
+       report: report,
+    },
+    success: function(result){ 
+      $('#ReportFrom').modal('show');
+      $('#ReportFrom').find('#RepoID').val(result.report.id)
+      $('#ReportFrom').find('#RepoName').val(result.report.file_name)
+      
+    }});
+  }
+</script>
 
 
 @endsection

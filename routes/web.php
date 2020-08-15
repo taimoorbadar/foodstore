@@ -49,6 +49,9 @@ Route::get('/pdfview','HomeController@pdfview');
 
 Route::post('/delreport', 'HomeController@delreport')->name('delreport');
 
+Route::post('/editrepo', 'HomeController@editrepo')->name('editrepo');
+Route::post('/updaterepo', 'HomeController@updaterepo')->name('updaterepo');
+
 
 
 
