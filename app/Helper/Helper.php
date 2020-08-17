@@ -46,6 +46,7 @@ function cat_array($arr) {
             $result[$v["catagory"]]["discount"] = $v["discount"];
             $result[$v["catagory"]]["tprice"] = $v["tprice"];
         } else {
+            $result[$v["catagory"]]["discount"] .= "," . $v["discount"];
             $result[$v["catagory"]]["product"] .= "," . $v["product"];
             $result[$v["catagory"]]["uprice"] .= "," . $v["uprice"];
             $result[$v["catagory"]]["quantity"] .= "," . $v["quantity"];

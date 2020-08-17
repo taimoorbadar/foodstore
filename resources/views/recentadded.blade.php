@@ -40,7 +40,11 @@
                       <tr style="border-bottom:1px solid #e6e6e6;">
                         <td class="pre-cell"></td>
                         <td>{{$dat['pname']}}</td>
+                        @if($dat['discount']==0)
+                        <td>{{$dat['uprice']}}</td>
+                        @else
                         <td>{{$dat['oprice']}}({{$dat['discount']}}% Off) = {{$dat['uprice']}}</td>
+                        @endif
                         <td>{{$dat['quantity']}}</td>
                         <td>{{$dat['tprice']}}</td>
                       </tr>
@@ -117,7 +121,21 @@
                           @endforeach
                           @endif
                      </td>
-                     <td>{{$group['discount']}}%</td>
+                     
+                     <td>@php
+                            
+                          $discount=$group['discount'];
+                          $eachpros=explode( ',', $group['discount']);
+                            
+                          @endphp
+                        
+                        @if(isset($eachpros) && count($eachpros)>0)
+                          @foreach($eachpros as $prod)
+                          
+                          {{$prod}}%
+                          <br>
+                          @endforeach
+                          @endif</td>
                      <td>
                           @php
                             

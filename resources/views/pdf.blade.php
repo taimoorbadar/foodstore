@@ -14,12 +14,11 @@ $catgroup=$loading['catgroup'];
 
 
 <div class="row" id="contnet">
-  @if(isset($timee) && $timee!=null)
-
+  @if(isset($timee) && $timee!=false)
   <p style="    margin: 50px 50px 0 50px;">From: <span>{{$timee['time1']}}</span></p>
   <p style="    margin: 50px 50px 0 50px;">To: <span>{{$timee['time2']}}</span></p>
   @endif
-                    <h3 style="width: 100%;text-align: center;margin-top: 80px">Data Record</h3>
+                    <h3 style="width: 100%;text-align: center;margin-top: 80px">Data From</h3>
                             <table class="table is-indent" data-plugin="animateList" data-animate="fade" data-child="tr"
                     data-selectable="selectable">
                     <thead>
@@ -53,7 +52,11 @@ $catgroup=$loading['catgroup'];
                       <tr style="border-bottom:1px solid #e6e6e6;">
                         <td class="pre-cell"></td>
                         <td>{{$dat['pname']}}</td>
+                        @if($dat['discount']==0)
+                        <td>{{$dat['uprice']}}</td>
+                        @else
                         <td>{{$dat['oprice']}}({{$dat['discount']}}% Off) = {{$dat['uprice']}}</td>
+                        @endif
                         <td>{{$dat['quantity']}}</td>
                         <td>{{$dat['tprice']}}</td>
                       </tr>
@@ -130,7 +133,21 @@ $catgroup=$loading['catgroup'];
                           @endforeach
                           @endif
                      </td>
-                     <td>{{$group['discount']}}%</td>
+                     
+                     <td>@php
+                            
+                          $discount=$group['discount'];
+                          $eachpros=explode( ',', $group['discount']);
+                            
+                          @endphp
+                        
+                        @if(isset($eachpros) && count($eachpros)>0)
+                          @foreach($eachpros as $prod)
+                          
+                          {{$prod}}%
+                          <br>
+                          @endforeach
+                          @endif</td>
                      <td>
                           @php
                             
