@@ -236,6 +236,8 @@ class HomeController extends Controller
             return Redirect::back()->with('warning', 'No File Found');
         }
 
+
+
         foreach ($csv as $key => $value) {
             if($key=='0'){
                 continue;
@@ -285,17 +287,21 @@ class HomeController extends Controller
                 );
                 
                 }
-            }
-            if(isset($record['bid']) && $record['bid']==$request->branchid){
+
+
+                if(isset($record['bid']) && $record['bid']==$request->branchid){
                 if(isset($time1) && isset($time2) && $time2 >= $time1){
                 if($record['created'] >= $time1 && $record['created'] <= $time2){
                     if($time1!=false){
                         $data[]=$record;
                     }
+
+
                 
                 }
                 elseif($request->date1==null && $request->date2==null){
                     $data[]=$record;
+
                 }
                 }
                 
@@ -304,8 +310,12 @@ class HomeController extends Controller
                 $data[]=$record;
             }
 
+            }
+            
+
         }
 
+        
 
         if(isset($data) && count($data)>0){
 
